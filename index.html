@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart ATS</title>
+    <style>
+        /* Add your custom CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        #response {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Smart ATS</h1>
+    <p>Improve Your Resume ATS</p>
+    <form id="resumeForm">
+        <label for="jd">Job Description:</label><br>
+        <textarea id="jd" name="jd" rows="5" cols="50"></textarea><br>
+        <label for="resume">Upload Your Resume (PDF):</label><br>
+        <input type="file" id="resume" name="resume"><br>
+        <input type="button" value="Submit" onclick="processResume()">
+    </form>
+    <div id="response"></div>
+
+    <script>
+        function processResume() {
+            const jd = document.getElementById('jd').value;
+            const resume = document.getElementById('resume').files[0];
+            
+            if (!resume) {
+                alert('Please upload a resume file');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const resumeText = event.target.result;
+                const percentageMatch = calculatePercentageMatch(resumeText, jd);
+                displayResponse(percentageMatch);
+            };
+            reader.readAsText(resume);
+        }
+
+        function calculatePercentageMatch(resumeText, jd) {
+            const resumeWords = resumeText.toLowerCase().split(/[^\w]+/);
+            const jdWords = jd.toLowerCase().split(/[^\w]+/);
+            const totalWords = jdWords.length;
+            let matchCount = 0;
+
+            for (const word of jdWords) {
+                if (resumeWords.includes(word)) {
+                    matchCount++;
+                }
+            }
+
+            return ((matchCount / totalWords) * 100).toFixed(2);
+        }
+
+        function displayResponse(percentageMatch) {
+            const response = `Resume Match: ${percentageMatch}%`;
+            document.getElementById('response').innerText = response;
+        }
+    </script>
+</body>
+</html>
